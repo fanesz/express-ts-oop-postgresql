@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import Database from './database';
 
-export default class BaseRoute {
+export default class BaseRouter {
   protected router: Router;
   private dbInstance: Database | undefined;
 
@@ -18,7 +18,9 @@ export default class BaseRoute {
   public getDatabase(): Database {
     if (!this.dbInstance) {
       this.dbInstance = new Database();
+      console.log('init');
     }
+    console.log('get');
     return this.dbInstance;
   }
 

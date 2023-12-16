@@ -1,7 +1,7 @@
 import CategoryController from '.';
-import BaseRoute from '../../config/baseRouter';
+import BaseRouter from '../../config/baseRouter';
 
-export default class CategoryRoute extends BaseRoute {
+export default class CategoryRoute extends BaseRouter {
   private routerPath: string = '/categories';
   private controller: CategoryController;
 

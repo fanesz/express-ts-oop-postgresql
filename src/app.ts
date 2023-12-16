@@ -1,16 +1,16 @@
 import express, { Request, Response } from 'express';
 import Database from './config/database';
 import CategoryRoute from './controllers/categories/route';
+import BaseRouter from './config/baseRouter';
 
 export default class App {
   public app: express.Application;
   private port: number;
-  private db;
+  private db: any;
 
   constructor(appInit: { port: number; middleWares: any; controllers: any; }) {
     this.app = express();
     this.port = appInit.port;
-    this.db = new Database();
 
     this.middlewares(appInit.middleWares);
     this.routes(appInit.controllers);
@@ -23,7 +23,9 @@ export default class App {
   }
 
   public async initDB() {
-    await this.db.connect((status: string, message: string) => {
+
+    const baseRouter = new BaseRouter();
+    baseRouter.getDatabase().connect((status: string, message: string) => {
       if (!status) {
         throw new Error('[E] DB connection failed\n' + message);
       } else {

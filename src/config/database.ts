@@ -21,6 +21,10 @@ class Database {
     });
   }
 
+  getPool(): Pool | null {
+    return this.pool;
+  }
+
   connect(callback: Function) {
     this.pool?.connect((err, client, release) => {
       if (err) {
@@ -28,7 +32,6 @@ class Database {
       } else {
         callback(true, 'Connected to database: ' + process.env.DB_NAME);
       }
-      release();
     });
   }
 
