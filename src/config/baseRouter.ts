@@ -7,6 +7,7 @@ export default class BaseRoute {
 
   constructor() {
     this.router = Router();
+    this.dbInstance = new Database();
   }
 
   public getRoute(): Router {
@@ -17,11 +18,7 @@ export default class BaseRoute {
   public getDatabase(): Database {
     if (!this.dbInstance) {
       this.dbInstance = new Database();
-      // console.log('[I] !!! dbInstance is not initialized !!!');
-      // throw new Error('[E] dbInstance is not initialized');
     }
-    // console.log("=============");
-    
     return this.dbInstance;
   }
 

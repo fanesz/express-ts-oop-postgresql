@@ -22,8 +22,8 @@ export default class App {
     });
   }
 
-  public initDB() {
-    this.db.connect((status: string, message: string) => {
+  public async initDB() {
+    await this.db.connect((status: string, message: string) => {
       if (!status) {
         throw new Error('[E] DB connection failed\n' + message);
       } else {
@@ -60,6 +60,4 @@ const app = new App({
 });
 
 app.initDB();
-setTimeout(() => {
-  app.listen();
-}, 2000);
+app.listen();

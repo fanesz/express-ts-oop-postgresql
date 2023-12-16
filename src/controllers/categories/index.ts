@@ -1,39 +1,37 @@
 import { Request, Response } from 'express';
-import Database from '../../config/database';
+import { QueryConfig, QueryResult } from 'pg';
 
-export default class CategoryController {
-  private client: any;
-  private release: any;
+class CategoryController {
+  private database: any;
 
-  constructor(database: any) {
-    this.client = database.getClient();
-    this.release = database.getRelease();
+  constructor(dbInstance: any) {
+    this.database = dbInstance
   }
 
-  public getCategory(req: Request, res: Response) {
-    // console.log(this.db.test());
-    this.client?.query('SELECT 1+1 as test;', (err: any, result: any) => {
-      this.release();
-      if (err) {
-        return console.error('Error executing query', err.stack);
-      }
-      console.log('Database connected');
-    });
+  async getCategory(req: Request, res: Response) {
+    try {
+      this.database.connect((connected: boolean, message: string) => {
+        if (connected) {
+          const queryConfig: QueryConfig = {
+            text: 'SELECT * FROM categories;',
+          };
 
-    return
-
-    // this.db.getPool().query('SELECT * FROM categories', (err: any, result: any) => {
-    //   if (err) {
-    //     // Handle error
-    //     console.error('Error executing query:', err);
-    //     res.status(500).json({ error: 'Error fetching categories' });
-    //   } else {
-    //     // Process the result
-    //     const categories = result.rows; // Assuming the result contains categories
-
-    //     // Send categories as a response
-    //     res.status(200).json({ categories });
-    //   }
-    // });
+          this.database.query(queryConfig, (success: boolean, queryRes: QueryResult | Error) => {
+            if (success) {
+              res.send({ status: true, data: queryRes, message: "Query Successful" });
+            } else {
+              res.send({ status: false, message: queryRes });
+            }
+          });
+        } else {
+          res.send({ status: false, message: message });
+        }
+      });
+    } catch (error) {
+      console.error(error);
+      res.send({ status: false, message: 'Internal Server Error' });
+    }
   }
 }
+
+export default CategoryController;

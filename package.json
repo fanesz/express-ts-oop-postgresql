@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "ts-node-dev src/app.ts",
-    "migrate": "npm run migrate up -- --no-check-order"
+    "migrate": "node-pg-migrate"
   },
   "keywords": [],
   "author": "Vanezkun",

@@ -1,9 +1,9 @@
-import BaseRoute from '../../config/baseRouter';
 import CategoryController from '.';
+import BaseRoute from '../../config/baseRouter';
 
 export default class CategoryRoute extends BaseRoute {
   private routerPath: string = '/categories';
-  private controller;
+  private controller: CategoryController;
 
   constructor() {
     super();
@@ -11,7 +11,7 @@ export default class CategoryRoute extends BaseRoute {
   }
 
   protected initRoutes(): void {
-    this.router.get('/', this.controller.getCategory);
+    this.router.get('/', this.controller.getCategory.bind(this.controller));
   }
 
   public getRouterPath(): string {
