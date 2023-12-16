@@ -1,13 +1,14 @@
 import { Router } from 'express';
+import express from 'express';
 import Database from './database';
 
-export default class BaseRoute {
+export default class BaseRouter extends Database {
   protected router: Router;
-  private dbInstance: Database | undefined;
+  protected routeList: any[] = [];
 
   constructor() {
+    super();
     this.router = Router();
-    this.dbInstance = new Database();
   }
 
   public getRoute(): Router {
@@ -15,11 +16,8 @@ export default class BaseRoute {
     return this.router;
   }
 
-  public getDatabase(): Database {
-    if (!this.dbInstance) {
-      this.dbInstance = new Database();
-    }
-    return this.dbInstance;
+  getRouteList(): any[] {
+    return this.routeList;
   }
 
   protected initRoutes(): void {

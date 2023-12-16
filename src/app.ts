@@ -1,16 +1,15 @@
 import express, { Request, Response } from 'express';
 import Database from './config/database';
-import CategoryRoute from './controllers/categories/route';
+import CategoryRoute from './api/categories/route';
 
 export default class App {
   public app: express.Application;
   private port: number;
-  private db;
+  private dbInstance: Database = new Database();
 
   constructor(appInit: { port: number; middleWares: any; controllers: any; }) {
     this.app = express();
     this.port = appInit.port;
-    this.db = new Database();
 
     this.middlewares(appInit.middleWares);
     this.routes(appInit.controllers);
@@ -23,13 +22,12 @@ export default class App {
   }
 
   public async initDB() {
-    await this.db.connect((status: string, message: string) => {
-      if (!status) {
-        throw new Error('[E] DB connection failed\n' + message);
-      } else {
-        console.log('[I] DB connection successful\n--> ' + message);
-      }
-    });
+    try {
+      const result = await this.dbInstance.query({ text: "SELECT current_database()" });
+      console.log("[I] Connected to Database:", result.data.rows[0].current_database);
+    } catch (error) {
+      console.error("[E] at app.ts:", error);
+    }
   }
 
   private routes(controllers: { forEach: (arg0: (controller: any) => void) => void; }) {
@@ -43,7 +41,7 @@ export default class App {
       res.send('Hello World!');
     });
     this.app.listen(this.port, () => {
-      console.log(`App listening on the port ${this.port}`);
+      console.log("[I] App listening on the port:", this.port, "| http://localhost:" + this.port);
     });
   }
 }
@@ -58,6 +56,6 @@ const app = new App({
     express.urlencoded({ extended: true }),
   ]
 });
-
+console.log("====================================");
 app.initDB();
 app.listen();

@@ -1,58 +1,39 @@
-import { Pool, QueryConfig, QueryResult } from 'pg';
+import { Pool, QueryConfig, QueryResult as PGQueryResult } from 'pg';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-interface CustomError extends Error {
-  stack?: string;
+export type QueryResult = {
+  status: boolean;
+  data: PGQueryResult;
+  message: string;
 }
 
-
 class Database {
-  private pool: Pool | null;
+  private pool?: Pool;
 
   constructor() {
-    this.pool = new Pool({
-      host: process.env.DB_HOST,
-      port: parseInt(process.env.DB_PORT || '5432'),
-      user: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME,
+    this.pool = new Pool();
+  }
+
+  query(query: QueryConfig): Promise<QueryResult> {
+    return new Promise((resolve, reject) => {
+
+      if (!this.pool) {
+        this.pool = new Pool();
+      }
+
+      this.pool?.query(query, (err, res) => {
+        if (err) {
+          const errMessage = err.stack?.match(/(?:error|Error): (.+)/i)?.[1] || "Unknown error";
+          reject(errMessage);
+        } else {
+          resolve({ status: true, data: res, message: "Query Successfull" });
+        }
+      });
     });
   }
 
-  connect(callback: Function) {
-    this.pool?.connect((err, client, release) => {
-      if (err) {
-        callback(false, err.stack);
-      } else {
-        callback(true, 'Connected to database: ' + process.env.DB_NAME);
-      }
-      release();
-    });
-  }
-
-   private extractErrorMessage(err: CustomError): string {
-    if (err && err.stack) {
-      const stackLines = err.stack.split('\n');
-      const errorMessageLine = stackLines.find(line => line.includes('error:'));
-      if (errorMessageLine) {
-        const errorMessage = errorMessageLine.trim();
-        return errorMessage.split("error: ")[1];
-      }
-    }
-    return "Unknown error";
-  }
-
-  query(queryConfig: QueryConfig, callback: (success: boolean, queryRes: QueryResult | string) => void) {
-    this.pool?.query(queryConfig, (err: Error, queryRes) => {
-      if (err) {
-        callback(false, this.extractErrorMessage(err));
-      } else {
-        callback(true, queryRes);
-      }
-    });
-  }
 }
 
 export default Database;
