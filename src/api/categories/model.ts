@@ -1,7 +1,7 @@
-export default class CategoryModel {
-  id: string | undefined;
-  name: string | undefined;
-  description: string | undefined;
-  createdAt: Date | undefined;
-  updatedAt: Date | undefined;
+export default interface CategoryModel {
+  id?: string;
+  name?: string;
+  description?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
