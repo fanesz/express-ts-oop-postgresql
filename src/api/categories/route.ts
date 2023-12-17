@@ -7,7 +7,7 @@ export default class CategoryRoute extends BaseRouter {
 
   constructor() {
     super();
-    this.controller = new CategoryController(this.query);
+    this.controller = new CategoryController();
     this.initRoutes();
   }
 

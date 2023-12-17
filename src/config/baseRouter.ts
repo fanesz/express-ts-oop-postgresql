@@ -2,12 +2,11 @@ import { Router } from 'express';
 import express from 'express';
 import Database from './database';
 
-export default class BaseRouter extends Database {
+export default class BaseRouter {
   protected router: Router;
   protected routeList: any[] = [];
 
   constructor() {
-    super();
     this.router = Router();
   }
 

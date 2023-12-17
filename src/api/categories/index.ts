@@ -1,10 +1,11 @@
 import { Request, Response } from 'express';
+import Database from '../../config/database';
+import CategoryModel from './model';
 
-class CategoryController {
-  private query: Function;
+class CategoryController extends Database {
 
-  constructor(query: Function) {
-    this.query = query;
+  constructor() {
+    super();
   }
 
   async getCategory(req: Request, res: Response) {
@@ -13,8 +14,8 @@ class CategoryController {
         text: 'SELECT * FROM categories',
       };
 
-      const result = await this.query(query);
-      res.send({ status: true, data: result.data.rows, message: 'Query Successfull' });
+      const result: CategoryModel[] = (await this.query(query)).data.rows;
+      res.send({ status: true, data: result, message: 'Query Successfull' });
 
     } catch (err) {
       console.log(`[E] at api/categories/index.ts: ${err}`);

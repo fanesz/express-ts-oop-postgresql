@@ -1,4 +1,4 @@
-class CategoryModel {
+export default class CategoryModel {
   id: string | undefined;
   name: string | undefined;
   description: string | undefined;
